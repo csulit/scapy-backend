@@ -36,8 +36,8 @@ def notify_pusher(message):
     pusher_client.trigger('my-channel', 'my-event', {'message': message})
 
 def ping_and_notify(target_hosts, iface=None):
-    # Create a multiprocessing pool with a larger number of processes
-    pool = multiprocessing.Pool(processes=100)
+    # Create a multiprocessing pool with a number of processes equal to the number of CPUs
+    pool = multiprocessing.Pool(processes=multiprocessing.cpu_count())
     
     # Send ping requests in parallel
     results = pool.starmap(send_ping, [(target, iface) for target in target_hosts])
