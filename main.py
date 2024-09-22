@@ -6,6 +6,7 @@ import time
 import socket
 import os
 from dotenv import load_dotenv
+from datetime import datetime
 
 load_dotenv()
 
@@ -64,7 +65,11 @@ if __name__ == "__main__":
     
     try:
         while True:
+            start_time = datetime.now()
             ping_and_notify(target_hosts, iface=network_interface)
+            end_time = datetime.now()
+            elapsed_time = end_time - start_time
+            print(f"Time taken to ping all targets: {elapsed_time}")
             time.sleep(60)  # Wait for 1 minute before the next execution
     except KeyboardInterrupt:
         pass
