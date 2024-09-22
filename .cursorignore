@@ -133,3 +133,6 @@ dmypy.json
 
 # Cython debug symbols
 cython_debug/
+
+# Systemd service file
+ping_notifier.service
