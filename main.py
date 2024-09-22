@@ -60,7 +60,7 @@ if __name__ == "__main__":
     ]
     
     # Specify the network interface to use
-    network_interface = "en0"  # Replace with your network interface name
+    network_interface = "eth0"  # Replace with your network interface name
     
     try:
         while True:
