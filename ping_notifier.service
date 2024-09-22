@@ -1,0 +1,13 @@
+   [Unit]
+   Description=Ping Notifier Service
+   After=network.target
+
+   [Service]
+   ExecStart=sudo /path/to/your/venv/bin/python /path/to/your/script.py
+   WorkingDirectory=/path/to/your/
+   Restart=always
+   User=root
+   Environment=PYTHONUNBUFFERED=1
+
+   [Install]
+   WantedBy=multi-user.target
