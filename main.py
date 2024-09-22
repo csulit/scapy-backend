@@ -68,8 +68,8 @@ if __name__ == "__main__":
             start_time = datetime.now()
             ping_and_notify(target_hosts, iface=network_interface)
             end_time = datetime.now()
-            elapsed_time = end_time - start_time
-            print(f"Time taken to ping all targets: {elapsed_time}")
+            elapsed_time = (end_time - start_time).total_seconds()
+            print(f"Time taken to ping all targets: finished in {elapsed_time:.2f} seconds")
             time.sleep(60)  # Wait for 1 minute before the next execution
     except KeyboardInterrupt:
         pass
