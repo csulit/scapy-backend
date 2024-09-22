@@ -136,6 +136,3 @@ cython_debug/
 
 # Systemd service file
 ping_notifier.service
-
-# Python requirements file
-requirements.txt
