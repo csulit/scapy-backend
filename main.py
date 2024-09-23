@@ -27,14 +27,15 @@ def send_ping(target, iface=None):
     else:
         return f"{target} is reachable"
 
-def notify_pusher(message):
+def notify_pusher(messages):
     pusher_client = pusher.Pusher(
         app_id=os.getenv('PUSHER_APP_ID'),
         key=os.getenv('PUSHER_KEY'),
         secret=os.getenv('PUSHER_SECRET'),
         cluster=os.getenv('PUSHER_CLUSTER')
     )
-    pusher_client.trigger('my-channel', 'my-event', {'message': message})
+    for message in messages:
+        pusher_client.trigger('my-channel', 'my-event', {'message': message})
 
 def ping_and_notify(target_hosts, iface=None):
     # Create a multiprocessing pool with a number of processes equal to the number of CPUs
@@ -43,10 +44,14 @@ def ping_and_notify(target_hosts, iface=None):
     # Send ping requests in parallel
     results = pool.starmap(send_ping, [(target, iface) for target in target_hosts])
     
+    unreachable_messages = []
     for target, result in zip(target_hosts, results):
         print(result)
         if "unreachable" in result or "invalid address" in result:
-            notify_pusher(result)
+            unreachable_messages.append(result)
+    
+    if unreachable_messages:
+        notify_pusher(unreachable_messages)
 
 if __name__ == "__main__":
     target_hosts = [

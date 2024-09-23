@@ -1,6 +1,7 @@
 certifi==2024.8.30
 cffi==1.17.1
 charset-normalizer==3.3.2
+convex==0.6.0
 cryptography==43.0.1
 idna==3.10
 ndg-httpsclient==0.5.1
