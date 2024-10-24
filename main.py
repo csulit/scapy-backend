@@ -1,6 +1,7 @@
 import multiprocessing
 from scapy.layers.inet import IP, ICMP
-from scapy.sendrecv import sr1
+from scapy.sendrecv import sr1, srp
+from scapy.layers.l2 import ARP, Ether
 import pusher
 import time
 import socket
@@ -52,6 +53,22 @@ def ping_and_notify(target_hosts, iface=None):
     
     if unreachable_messages:
         notify_pusher(unreachable_messages)
+
+def get_ip_from_mac(mac_address, interface="eth0"):
+    # Create an ARP request packet
+    arp_request = ARP(pdst="192.168.1.0/24")  # Replace with the correct network range
+    ether = Ether(dst="ff:ff:ff:ff:ff:ff")
+    packet = ether / arp_request
+
+    # Send the packet and capture the response
+    result = srp(packet, iface=interface, timeout=2, verbose=False)[0]
+
+    # Iterate through the responses and match the MAC address
+    for sent, received in result:
+        if received.hwsrc.lower() == mac_address.lower():
+            return received.psrc  # Return the IP address
+
+    return None
 
 if __name__ == "__main__":
     target_hosts = [
@@ -360,6 +377,102 @@ if __name__ == "__main__":
         "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au", "standard.net.au",
         "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au",
         "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au",
+        "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au",
+        "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au",
+        "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au",
+        "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au",
+        "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au",
+        "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au",
+        "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au",
+        "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au",
+        "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au",
+        "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au",
+        "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au",
+        "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au",
+        "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au",
+        "examiner.com.au", "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au",
+        "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au",
+        "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au",
+        "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au",
+        "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au",
+        "theadvocate.com.au", "examiner.com.au", "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au",
+        "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au",
+        "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au",
+        "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au",
+        "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au",
+        "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au", "standard.net.au",
+        "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au",
+        "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au",
+        "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au",
+        "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au",
+        "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au",
+        "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au",
+        "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au",
+        "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au",
+        "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au",
+        "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au",
+        "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au",
+        "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au",
+        "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au",
+        "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au",
+        "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au",
+        "examiner.com.au", "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au",
+        "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au",
+        "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au",
+        "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au",
+        "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au",
+        "theadvocate.com.au", "examiner.com.au", "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au",
+        "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au",
+        "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au",
+        "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au",
+        "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au",
+        "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au", "standard.net.au",
+        "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au",
+        "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au",
+        "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au",
+        "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au",
+        "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au",
+        "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au",
+        "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au",
+        "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au",
+        "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au",
+        "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au",
+        "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au",
+        "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au",
+        "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au",
+        "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au",
+        "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au",
+        "examiner.com.au", "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au",
+        "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au",
+        "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au",
+        "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au",
+        "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au",
+        "theadvocate.com.au", "examiner.com.au", "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au",
+        "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au",
+        "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au",
+        "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au",
+        "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au",
+        "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au", "standard.net.au",
+        "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au",
+        "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au",
+        "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au",
+        "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au",
+        "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au", "thecourier.com.au",
+        "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au", "kalminer.com.au",
+        "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au", "soundtelegraph.com.au",
+        "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au", "donnybrookmail.com.au",
+        "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au", "southernhighlandnews.com.au",
+        "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au", "examiner.com.au",
+        "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au", "thewest.com.au",
+        "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au", "pilbaranews.com.au",
+        "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au", "harveyreporter.com.au",
+        "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au", "illawarramercury.com.au",
+        "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au", "theadvocate.com.au",
+        "examiner.com.au", "thecourier.com.au", "standard.net.au", "thewarrnamboolstandard.com.au", "thecouriermail.com.au",
+        "thewest.com.au", "kalminer.com.au", "albanyadvertiser.com.au", "broomead.com.au", "geraldtonguardian.com.au",
+        "pilbaranews.com.au", "soundtelegraph.com.au", "busseltonmail.com.au", "augustamargaretrivermail.com.au", "manjimupbridgetownmail.com.au",
+        "harveyreporter.com.au", "donnybrookmail.com.au", "colliemail.com.au", "bunburymail.com.au", "southcoastregister.com.au",
+        "illawarramercury.com.au", "southernhighlandnews.com.au", "goulburnpost.com.au", "canberratimes.com.au", "theland.com.au",
         "baidu.com", "alibaba.com", "jd.com", "hulu.com", "disneyplus.com"
     ]
     
