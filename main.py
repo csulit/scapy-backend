@@ -54,9 +54,9 @@ def ping_and_notify(target_hosts, iface=None):
     if unreachable_messages:
         notify_pusher(unreachable_messages)
 
-def get_ip_from_mac(mac_address, interface="eth0"):
+def get_ip_from_mac(mac_address, network_range, interface="eth0"):
     # Create an ARP request packet
-    arp_request = ARP(pdst="192.168.1.0/24")  # Replace with the correct network range
+    arp_request = ARP(pdst=network_range)
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
     packet = ether / arp_request
 
