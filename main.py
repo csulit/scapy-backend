@@ -6,6 +6,9 @@ import time
 import socket
 from datetime import datetime
 
+# Should be eth0 on linux, en0 on mac
+INTERFACE = "eth0"
+
 def is_valid_address(address):
     try:
         socket.gethostbyname(address)
@@ -30,7 +33,7 @@ def log_messages(messages):
     for message in messages:
         print(f"Alert: {message}")
 
-def get_ip_from_mac(mac_address, network_range, interface="eth0"):
+def get_ip_from_mac(mac_address, network_range, interface=INTERFACE):
     # Create an ARP request packet
     arp_request = ARP(pdst=network_range)
     ether = Ether(dst="ff:ff:ff:ff:ff:ff")
@@ -97,7 +100,7 @@ if __name__ == "__main__":
     ]
     
     # Specify the network interface to use
-    network_interface = "eth0"  # Replace with your network interface name
+    network_interface = INTERFACE  # Replace with your network interface name
     
     try:
         while True:
