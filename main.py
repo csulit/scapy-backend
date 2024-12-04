@@ -15,13 +15,16 @@ def is_valid_address(address):
 
 def send_ping(target, iface=None):
     if not is_valid_address(target):
-        return f"{target} is an invalid address"
+        return f"{target} is an invalid address", 0
     
+    start_time = time.time()
     response = sr1(IP(dst=target)/ICMP(), timeout=2, iface=iface, verbose=False)
+    response_time = (time.time() - start_time) * 1000  # Convert to milliseconds
+    
     if response is None:
-        return f"{target} is unreachable"
+        return f"{target} is unreachable", 0
     else:
-        return f"{target} is reachable"
+        return f"{target} is reachable", response_time
 
 def log_messages(messages):
     for message in messages:
@@ -66,11 +69,19 @@ def ping_and_notify(target_records, iface=None):
     
     # Process results
     unreachable_messages = []
+    response_times = {}
+    
     for mac_address, ip in mac_to_ip.items():
-        result = results[ip_addresses.index(ip)]
-        print(f"MAC: {mac_address} -> {result}")
+        result, response_time = results[ip_addresses.index(ip)]
+        print(f"MAC: {mac_address} -> {result} (Response time: {response_time:.2f}ms)")
         if "unreachable" in result or "invalid address" in result:
             unreachable_messages.append(result)
+        else:
+            response_times[mac_address] = response_time
+    
+    if response_times:
+        avg_response_time = sum(response_times.values()) / len(response_times)
+        print(f"\nAverage response time across all reachable devices: {avg_response_time:.2f}ms")
     
     if unreachable_messages:
         log_messages(unreachable_messages)
