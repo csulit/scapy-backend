@@ -4,7 +4,6 @@ from scapy.sendrecv import sr1, srp
 from scapy.layers.l2 import ARP, Ether
 import time
 import socket
-import os
 from datetime import datetime
 
 def is_valid_address(address):
@@ -79,7 +78,10 @@ def ping_and_notify(target_records, iface=None):
 if __name__ == "__main__":
     # Sample target records with MAC addresses and network ranges
     target_records = [
-        {"mac_address": "test mac", "network_range": "test network range"}
+        {"mac_address": "00:15:65:E8:0E:69", "network_range": "192.168.13.83/22"},
+        {"mac_address": "88:43:E1:55:22:74", "network_range": "192.168.13.65/22"},
+        {"mac_address": "00:02:FD:FF:9A:7D", "network_range": "192.168.12.68/22"},
+        {"mac_address": "80:5E:C0:63:80:5A", "network_range": "192.168.12.207/22"}
         # Add more records as needed
     ]
     
