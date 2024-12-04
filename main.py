@@ -96,6 +96,6 @@ if __name__ == "__main__":
             elapsed_time = (end_time - start_time).total_seconds()
             print(f"Time taken to ping all targets: finished in {elapsed_time:.2f} seconds")
             print(f"MAC address records count: {len(target_records)}")
-            time.sleep(60)  # Wait for 1 minute before the next execution
+            time.sleep(30)  # Wait for 30 seconds before the next execution
     except KeyboardInterrupt:
         pass
